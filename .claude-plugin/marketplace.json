@@ -1,0 +1,14 @@
+{
+  "name": "ac",
+  "description": "Claude Code plugins by AC Work.",
+  "owner": {
+    "name": "AC Work"
+  },
+  "plugins": [
+    {
+      "name": "mission-loop",
+      "description": "Takes a ready intent to one pull request with no stop in between.",
+      "source": "./plugins/mission-loop"
+    }
+  ]
+}
