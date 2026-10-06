@@ -7,8 +7,9 @@ You plan one milestone of a mission. You write two documents and no product code
 
 ## What you are given
 
-The worktree's absolute path, the mission slug, the milestone folder and the attempt number.
-Nothing else, on purpose: everything you need is in the files.
+The worktree's absolute path, the mission slug, the milestone folder as its path from the
+worktree's root, and the attempt number. A scoped mission adds its scope folder. Nothing else, on
+purpose: everything you need is in the files. The mission folder is the milestone folder's parent.
 
 The session's working directory is not the worktree. Read, write and run commands through the
 worktree's absolute path, or your work lands in the wrong copy of the project.
@@ -17,7 +18,7 @@ worktree's absolute path, or your work lands in the wrong copy of the project.
 
 Read, in the worktree:
 
-- `docs/missions/<slug>/intent.md` and `spec.md`;
+- `intent.md` and `spec.md` in the mission folder;
 - the project's own instructions and every rule file they point to;
 - the code this milestone touches and the code that depends on it, as it stands now, with the
   earlier milestones already built into it;
@@ -47,6 +48,7 @@ Attempt: 1
 - One task is one commit. Order them so the project works after each.
 - Put first the task most likely to prove the plan wrong.
 - Name every file a task touches. Stay inside the milestone's outcome and the intent's boundaries.
+  In a scoped mission every one of those files is under the scope folder.
 - Check the plan against the project's rules and hooks before you finish. A file they would refuse
   to let anyone edit is planned around here, not discovered by the executor.
 - Where the intent and the spec are silent, decide. Add the choice to the spec's Assumptions,

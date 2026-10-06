@@ -18,6 +18,9 @@ docs/missions/<slug>/
 A milestone folder is `m<n>-<name>`, taken from the intent's `### M<n> — <name>` heading in
 lowercase kebab-case. `issues.md` exists only once an attempt has failed.
 
+A scoped mission's folder is under its scope folder: `apps/shop/docs/missions/<slug>/` for the
+scope folder `apps/shop`.
+
 ## state.md
 
 ```markdown
@@ -44,6 +47,10 @@ Milestone status: `pending` · `planning` · `executing` · `passed` · `blocked
 
 At most one milestone is `planning`, `executing` or `blocked`. `Milestone` and `Attempt` name it.
 With every milestone `passed`, the state is `done` and both lines read `—`.
+
+A scoped mission has one more line, after `Branch`: `Scope: apps/shop`, its scope folder. Its
+branch line then reads `Branch: mission/apps/shop/csv-export`. A state file without a `Scope`
+line belongs to a mission of the whole project.
 
 ## spec.md
 
@@ -91,7 +98,8 @@ Files:
 
 Every requirement names the decision and the milestone it comes from. An assumption names who made
 it: `scaffolding`, or `planner` or `executor` with the milestone. Write `None.` under Overlap when
-no file is shared.
+no file is shared. A path under Files is written from the repository's root, in a scoped mission
+too.
 
 The tasks here are an outline. The planner turns them into the checklist the executor ticks, and
 may split or reorder them within the milestone's outcome.
@@ -128,3 +136,6 @@ read three things from them:
 - `Attempt: <n>` near the top of `plan.md` and of `proof.md`;
 - the task checklist in `plan.md`, where `- [ ]` is open and `- [x]` is built;
 - `Result: pass` or `Result: fail` near the top of `proof.md`.
+
+In a scoped mission the proof's table starts with a row `S`, the validator's own check that no
+file outside the scope folder changed. It counts toward `Result` like any other row.

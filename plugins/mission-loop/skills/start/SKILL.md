@@ -17,27 +17,55 @@ them carries another's context.
 Arguments: `$ARGUMENTS`. The first word is the slug. Anything after it is the user's direction for
 a blocked mission. Empty means no slug was given.
 
+## Scope
+
+A project can keep missions for one part of itself beside the missions of the whole. The folder
+the session started in decides which kind this run takes.
+
+Walk up from that folder, inside its checkout, to the nearest folder that holds an instruction
+file, `CLAUDE.md`. At the checkout's root, or with none found below it, the mission is of the
+whole project and every name in this skill is as written. Otherwise that folder is the scope
+folder, written as its path from the root, and the mission is scoped:
+
+| | whole project | scope folder `apps/shop` |
+| - | ------------- | ------------------------ |
+| mission folder | `docs/missions/<slug>/` | `apps/shop/docs/missions/<slug>/` |
+| branch | `mission/<slug>` | `mission/apps/shop/<slug>` |
+| worktree | `.worktrees/<slug>` | `.worktrees/apps/shop/<slug>` |
+
+Where this skill names one of the three, read it for the mission's scope. The worktree is under
+the primary checkout's root in both.
+
+A scoped mission commits files under its scope folder and nowhere else: its documents in its
+mission folder, its code beside them. A step that would need a file outside is a failure entry,
+never a wider scope.
+
+A session runs the missions of its own scope alone. A slug found only in another scope: say which
+folder to start the session in, and stop.
+
 ## Pick the mission
 
 A slug was given: that mission.
 
-No slug: list the candidates. A candidate is a mission branch whose state is not `done`, or an
-intent in the primary checkout marked `Status: ready` with no mission branch yet. Exactly one: take
-it. More than one: list each with its state and stop. None: say so and stop. Never choose between
-two.
+No slug: list the candidates. A candidate is a mission branch of this scope whose state is not
+`done`, or an intent of this scope in the primary checkout marked `Status: ready` with no mission
+branch yet. Exactly one: take it. More than one: list each with its state and stop. None: say so
+and stop. Never choose between two.
 
 Before you act, say what you are about to do in one line: mission, milestone, state, attempt.
 `csv-export: m2 of 3, executing, attempt 1, task 3 of 5.`
 
 ## Door check
 
-Run it once, when the mission has no branch yet. The intent is `docs/missions/<slug>/intent.md` in
-the primary checkout. It passes when:
+Run it once, when the mission has no branch yet. The intent is `intent.md` in the mission folder
+of the primary checkout. It passes when:
 
 - its status line reads `Status: ready`;
 - it has the five sections Goals, Decisions, Scope, Milestones and Boundaries, each filled in, with
   no placeholder text left from the template;
-- every milestone has an `Outcome` and a `Done when`.
+- every milestone has an `Outcome` and a `Done when`;
+- no other mission's branch name starts with this mission's followed by `/`, and this mission's
+  starts with no other's: git cannot hold both.
 
 If any part fails, name each one and stop. Do not repair the intent. That is a conversation the
 user has through `/mission-loop:intent`.
@@ -45,14 +73,13 @@ user has through `/mission-loop:intent`.
 ## Where the work happens
 
 The primary checkout is the project's main working copy, the first entry of `git worktree list`.
-The mission has one branch, `mission/<slug>`, and one worktree, `.worktrees/<slug>` under the
-primary checkout.
+The mission has one branch and one worktree, named as Scope gives them.
 
 - Everything the mission writes, documents and code, goes in the worktree and is committed on the
   branch.
-- The session's working directory is the primary checkout, so a relative path lands in the wrong
-  copy. Use the worktree's absolute path for every file and every command, and give agents the
-  same.
+- The session's working directory is in the primary checkout, so a relative path lands in the
+  wrong copy. Use the worktree's absolute path for every file and every command, and give agents
+  the same.
 - Never switch, rebase, reset or commit in the primary checkout.
 - The branch exists and the worktree is gone: add the worktree back from the branch and prepare it
   again. The commits are intact.
@@ -68,7 +95,7 @@ rewrite `state.md` to match.
 
 | Found | Do |
 | ----- | -- |
-| no branch `mission/<slug>` | door check, then scaffolding |
+| no mission branch | door check, then scaffolding |
 | the branch, without a committed `spec.md` and `state.md` | scaffolding |
 | state `blocked` | see Blocked |
 | every milestone `passed` | close |
@@ -102,11 +129,12 @@ Yours to do, once per mission.
 4. **Spec.** Read the intent, the project's instructions, and the code the milestones concern.
    Write `spec.md`: the requirements, the assumptions, and for each milestone its tasks and the
    files it will touch. Keep the intent's milestones in their order, with their names, outcomes and
-   `Done when`.
-5. **Overlap.** For every other `mission/*` branch not yet merged into the base, read the file
-   lists in its spec. Record each file both missions touch under Overlap. This never stops the run.
-6. **State.** Write `state.md` with every milestone `pending`. Commit `spec.md` and `state.md`
-   together.
+   `Done when`. In a scoped mission every file is under the scope folder.
+5. **Overlap.** For every other mission branch not yet merged into the base, of any scope, read
+   the file lists in its spec. Record each file both missions touch under Overlap. This never
+   stops the run.
+6. **State.** Write `state.md` with every milestone `pending`, and with its `Scope` line in a
+   scoped mission. Commit `spec.md` and `state.md` together.
 
 The spec decides nothing the intent already decided. Where the intent is silent, decide, and record
 the choice under Assumptions with your reason.
@@ -138,8 +166,9 @@ task and ticks the task in the same commit.
 ### Dispatching
 
 Give an agent four facts and nothing else: the worktree's absolute path, the slug, the milestone
-folder, and the attempt number. Do not describe the work, summarise an earlier agent's report, or
-say what you expect to find. The files carry all of that, and an agent handed a conclusion returns
+folder as its path from the worktree's root, and the attempt number. A scoped mission adds a
+fifth, the scope folder. Do not describe the work, summarise an earlier agent's report, or say
+what you expect to find. The files carry all of that, and an agent handed a conclusion returns
 it confirmed. The validator in particular is told nothing about how the build went.
 
 When an agent returns, check that the file it owes is committed. If it is not, stash what it left
@@ -164,7 +193,7 @@ When every milestone has passed:
 2. Push the branch. This is the mission's only push.
 3. Open one pull request against the base, following the project's conventions for pull requests.
    Its description gives the goals in two lines, each milestone with its result and the path to its
-   proof, every assumption, and every overlap.
+   proof, every assumption, and every overlap. For a scoped mission it names the scope folder.
 4. Report the pull request, the assumptions, the overlaps, and any stash you left behind.
 
 Never merge it. With no remote, or no way to open a pull request from here, stop after the commit

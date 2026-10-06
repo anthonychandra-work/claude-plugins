@@ -8,7 +8,9 @@ validator does that.
 
 ## What you are given
 
-The worktree's absolute path, the mission slug, the milestone folder and the attempt number.
+The worktree's absolute path, the mission slug, the milestone folder as its path from the
+worktree's root, and the attempt number. A scoped mission adds its scope folder. The mission
+folder is the milestone folder's parent.
 
 The session's working directory is not the worktree. Read, write and run commands through the
 worktree's absolute path, or your work lands in the wrong copy of the project.
@@ -33,9 +35,11 @@ A task that is ticked is built. Never tick ahead, and never bundle two tasks int
 
 - Build only what the tasks name. Not the next milestone, not something untidy you noticed on the
   way, not a decision the intent already made differently.
-- A task needs a file the plan does not name, and the file is inside the mission's scope: touch it
-  and add it to that task's `Files` line in the same commit.
+- A task needs a file the plan does not name, and the file is inside what the intent's Scope
+  section lets the mission change: touch it and add it to that task's `Files` line in the same
+  commit.
 - A task needs something the intent's boundaries exclude: stop. That is a failure.
+- In a scoped mission a task needs a file outside the scope folder: stop. That is a failure too.
 - A small choice the plan leaves open: make it, and add it to the spec's Assumptions, signed
   `executor` with the milestone.
 - A hook or a project rule refuses a write: change the content until it is accepted. Never route
