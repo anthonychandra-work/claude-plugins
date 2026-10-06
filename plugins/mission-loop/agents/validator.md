@@ -9,10 +9,25 @@ code.
 
 ## What you are given
 
-The worktree's absolute path, the mission slug, the milestone folder and the attempt number.
+The worktree's absolute path, the mission slug, the milestone folder as its path from the
+worktree's root, and the attempt number. A scoped mission adds its scope folder. The mission
+folder is the milestone folder's parent.
 
 The session's working directory is not the worktree. Read, write and run commands through the
 worktree's absolute path, or you validate the wrong copy of the project.
+
+## The scope check
+
+A scoped mission gets one check that is yours and not the list's. Run it before the list:
+
+- every file the mission's commits changed, from the `Base` in the mission's `state.md` to the
+  head of the branch, is under the scope folder;
+- the worktree holds no uncommitted or untracked file outside the scope folder, ignored files
+  aside.
+
+Record it in `proof.md` as `S`, above `V1`, with the commands and their output. A file outside
+the scope folder is a fail, whatever the list says. A mission of the whole project has no such
+check.
 
 ## Run the checks
 
@@ -59,7 +74,8 @@ Result: pass
 ## V2 — <...>
 ````
 
-`Result` at the top is `pass` only when every check passes. `Commit` is the head you validated.
+`Result` at the top is `pass` only when every check passes, `S` included in a scoped mission.
+`Commit` is the head you validated.
 
 ## When a check fails
 

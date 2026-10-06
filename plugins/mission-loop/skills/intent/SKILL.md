@@ -1,6 +1,6 @@
 ---
 name: intent
-description: Use when the user wants to capture a feature, change, fix or any other piece of work as a mission intent, asks to write or revise an intent, or types /mission-loop:intent. Produces docs/missions/<slug>/intent.md, the only input a mission run reads.
+description: Use when the user wants to capture a feature, change, fix or any other piece of work as a mission intent, asks to write or revise an intent, or types /mission-loop:intent. Produces docs/missions/<slug>/intent.md, under the scope folder when the session started in one; it is the only input a mission run reads.
 argument-hint: "[slug]"
 ---
 
@@ -10,14 +10,30 @@ Turn a conversation into `docs/missions/<slug>/intent.md`. A mission run builds 
 alone and never stops to ask a question, so every decision the build needs has to be in it before
 it is marked ready.
 
+## Scope
+
+A project can keep missions for one part of itself beside the missions of the whole. The folder
+the session started in decides which kind this intent is.
+
+Walk up from that folder, inside its checkout, to the nearest folder that holds an instruction
+file, `CLAUDE.md`. At the checkout's root, or with none found below it, the intent is for a
+mission of the whole project and every name in this skill is as written. Otherwise that folder is
+the scope folder, written as its path from the root, and the mission is scoped. For the scope
+folder `apps/shop` its folder is `apps/shop/docs/missions/<slug>/`, its branch
+`mission/apps/shop/<slug>` and its worktree `.worktrees/apps/shop/<slug>`.
+
+A scoped mission changes files under its scope folder and nowhere else. Say so in the intent's
+Scope and Boundaries sections. When what the user wants needs a change outside the scope folder,
+tell them it is a mission of the whole project, written in a session started at the root, and
+write no intent here.
+
 ## Before the conversation
 
 Read the project's own instructions, and as much of the project as your questions need. Ask the
 user only what the project cannot tell you.
 
-Look for the mission first: a folder under `docs/missions/`, a branch named `mission/<slug>`, a
-worktree under `.worktrees/`. If one exists, show the user what it already holds before asking
-anything new.
+Look for the mission first: its folder, its branch, its worktree. If one exists, show the user
+what it already holds before asking anything new.
 
 Agree a slug: short, kebab-case, named after the outcome.
 
@@ -48,8 +64,8 @@ Use `intent-template.md` beside this file. All five sections are required.
   it or cut it differently.
 - **Boundaries** — what the run must not touch or change.
 
-Write the file in the project's main working copy. Leave it uncommitted unless the project's
-instructions say otherwise; the run carries it onto the mission branch.
+Write the file in the mission folder of the project's main working copy. Leave it uncommitted
+unless the project's instructions say otherwise; the run carries it onto the mission branch.
 
 ## Status
 
@@ -67,3 +83,5 @@ intent.
 - You are about to write a milestone with no `Done when`, or one nobody could check.
 - You are about to leave a section empty because the user did not mention it.
 - You are about to write a decision the user never made and did not leave to you.
+- You are about to write a scoped intent with a milestone that needs a file outside the scope
+  folder.

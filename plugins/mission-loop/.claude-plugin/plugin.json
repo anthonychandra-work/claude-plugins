@@ -1,6 +1,6 @@
 {
   "name": "mission-loop",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Takes a ready intent to one pull request with no stop in between: a spec, then each milestone planned, built and validated in turn, resumable from what is committed.",
   "author": {
     "name": "AC Work"

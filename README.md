@@ -31,6 +31,23 @@ intent that is not ready or is missing a section.
 `/mission-loop:status` reports every mission's state, milestone and attempt, and what is waiting on
 you. It changes nothing.
 
+### A mission for one part of a project
+
+A project that keeps an instruction file, `CLAUDE.md`, in a folder below its root can keep
+missions for that part beside the missions of the whole. The folder a session starts in decides
+which: started in `apps/shop/` or below it, the three commands work on that scope, and started at
+the root they work on the whole project.
+
+| | whole project | scope folder `apps/shop` |
+|---|---|---|
+| mission folder | `docs/missions/<slug>/` | `apps/shop/docs/missions/<slug>/` |
+| branch | `mission/<slug>` | `mission/apps/shop/<slug>` |
+| worktree | `.worktrees/<slug>` | `.worktrees/apps/shop/<slug>` |
+
+A scoped mission commits files under its scope folder and nowhere else. The validator checks that
+on every milestone, and a file outside fails the milestone. Work that needs a change outside is a
+mission of the whole project, started at the root.
+
 ### A run
 
 1. **Scaffolding.** The mission gets one branch and one worktree. The spec lists the requirements,
@@ -64,7 +81,8 @@ docs/missions/<slug>/
     issues.md        one entry per failed attempt
 ```
 
-All of it is committed on the mission's branch and arrives with the pull request.
+All of it is committed on the mission's branch and arrives with the pull request. A scoped
+mission's folder is under its scope folder.
 
 ### Resuming
 
@@ -77,6 +95,10 @@ stashed and that step is redone.
 
 The run asks no questions, but Claude Code still asks for permission to edit files and run
 commands unless the session's permission mode allows them. Start the session in a mode that does.
+
+A scoped mission's worktree is outside the folder its session started in. A mode that accepts
+edits in the session's working folders still asks there, so add `.worktrees/` as a working folder
+of that session.
 
 Run one session per mission. Two missions can run at once in two sessions; two sessions on the same
 mission write over each other.
