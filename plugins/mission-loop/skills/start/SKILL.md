@@ -116,10 +116,12 @@ latest owner entry, plus one.
 
 Yours to do, once per mission.
 
-1. **Base.** Fetch. The base is the remote's default branch, unless the project's instructions name
-   another. A project with no remote uses the primary checkout's current commit. Create the branch
-   and the worktree from the base. If git does not already ignore `.worktrees/`, add it to the
-   repository's local exclude file.
+1. **Base.** The base branch is the branch the primary checkout has checked out when scaffolding
+   runs, and the base is that branch's latest local commit: commits not yet pushed are in it,
+   uncommitted changes are not. The base branch is fixed from here; later runs read it from
+   `state.md`, whatever the primary checkout has checked out by then. Fetch, then create the
+   branch and the worktree from the base. If git does not already ignore `.worktrees/`, add it to
+   the repository's local exclude file.
 2. **Intent.** If the worktree's copy of the intent is missing or differs from the primary
    checkout's, copy it in and commit it. If the original is untracked, delete it once that commit
    exists, so the eventual merge does not collide with it. The worktree's copy is the intent from
@@ -130,11 +132,11 @@ Yours to do, once per mission.
    Write `spec.md`: the requirements, the assumptions, and for each milestone its tasks and the
    files it will touch. Keep the intent's milestones in their order, with their names, outcomes and
    `Done when`. In a scoped mission every file is under the scope folder.
-5. **Overlap.** For every other mission branch not yet merged into the base, of any scope, read
-   the file lists in its spec. Record each file both missions touch under Overlap. This never
-   stops the run.
-6. **State.** Write `state.md` with every milestone `pending`, and with its `Scope` line in a
-   scoped mission. Commit `spec.md` and `state.md` together.
+5. **Overlap.** For every other mission branch not yet merged into the base branch, locally or on
+   the remote, of any scope, read the file lists in its spec. Record each file both missions touch
+   under Overlap. This never stops the run.
+6. **State.** Write `state.md` with every milestone `pending`, the base and the base branch, and
+   its `Scope` line in a scoped mission. Commit `spec.md` and `state.md` together.
 
 The spec decides nothing the intent already decided. Where the intent is silent, decide, and record
 the choice under Assumptions with your reason.
@@ -190,14 +192,22 @@ entry.
 When every milestone has passed:
 
 1. Set the state to `done` and commit it.
-2. Push the branch. This is the mission's only push.
-3. Open one pull request against the base, following the project's conventions for pull requests.
-   Its description gives the goals in two lines, each milestone with its result and the path to its
-   proof, every assumption, and every overlap. For a scoped mission it names the scope folder.
-4. Report the pull request, the assumptions, the overlaps, and any stash you left behind.
+2. If the remote lacks the base branch, or holds it without the base, push the base to the
+   remote's base branch, never forced. The pull request then shows the mission's commits alone.
+3. Push the mission branch.
+4. Open one pull request from the mission branch into the base branch, following the project's
+   conventions for pull requests. Its description gives the goals in two lines, each milestone with
+   its result and the path to its proof, every assumption, and every overlap. For a scoped mission
+   it names the scope folder.
+5. Report the pull request, the base branch, any push of it, the assumptions, the overlaps, and any
+   stash you left behind.
 
-Never merge it. With no remote, or no way to open a pull request from here, stop after the commit
-and say that the branch is ready and why there is no pull request.
+The base branch is the one `state.md` names. A state file without that line comes from an earlier
+version of this skill, and its base branch is the remote's default branch.
+
+Never merge it. With no remote, no way to open a pull request from here, or a refused push of the
+base, stop after the last commit that succeeded and say that the branch is ready and why there is
+no pull request.
 
 ## Rules that hold throughout
 
@@ -205,8 +215,9 @@ and say that the branch is ready and why there is no pull request.
 - A step is finished when its file is committed, and not before.
 - The intent is never edited once scaffolding begins.
 - The project's instructions outrank this skill wherever they speak: its commands, its commit and
-  pull-request conventions, its base branch, its hooks. Where it has no commit convention, write
-  `<type>(<slug>): <what changed>`.
+  pull-request conventions, its hooks. Where it has no commit convention, write
+  `<type>(<slug>): <what changed>`. The base branch is the exception: it is the branch scaffolding
+  found checked out, whatever branch the instructions name.
 - A hook or a project rule that refuses a write is obeyed by changing the content. Never route
   around it.
 - Nothing is pushed before close.
@@ -220,6 +231,7 @@ Read `references/file-shapes.md` before writing `spec.md`, `state.md` or an entr
 
 - The door check fails, or there is more than one candidate and no slug.
 - The mission is blocked.
+- The primary checkout has no branch checked out when scaffolding runs.
 - The worktree or the branch cannot be created.
 - Going on would need a change in the primary checkout, a rewrite of commits already made, or
   anything outside the worktree that cannot be undone.

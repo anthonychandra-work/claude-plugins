@@ -30,6 +30,7 @@ State: executing
 Milestone: m2-download-link
 Attempt: 1
 Base: 4c1e9a2
+Base branch: billing-revamp
 Branch: mission/csv-export
 
 | milestone | status |
@@ -48,6 +49,9 @@ Milestone status: `pending` · `planning` · `executing` · `passed` · `blocked
 At most one milestone is `planning`, `executing` or `blocked`. `Milestone` and `Attempt` name it.
 With every milestone `passed`, the state is `done` and both lines read `—`.
 
+`Base` is the commit the mission started from. `Base branch` is the branch that commit was taken
+from, and the branch the pull request goes into. `Branch` is the mission's own branch.
+
 A scoped mission has one more line, after `Branch`: `Scope: apps/shop`, its scope folder. Its
 branch line then reads `Branch: mission/apps/shop/csv-export`. A state file without a `Scope`
 line belongs to a mission of the whole project.
@@ -57,7 +61,7 @@ line belongs to a mission of the whole project.
 ```markdown
 # Spec: Export invoices as CSV
 
-From `intent.md`. Base `4c1e9a2`.
+From `intent.md`. Base `4c1e9a2` on `billing-revamp`.
 
 ## Requirements
 

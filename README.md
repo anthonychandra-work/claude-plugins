@@ -50,9 +50,12 @@ mission of the whole project, started at the root.
 
 ### A run
 
-1. **Scaffolding.** The mission gets one branch and one worktree. The spec lists the requirements,
-   the tasks and the files for each milestone, every assumption made where the intent was silent,
-   and every file shared with another unfinished mission.
+1. **Scaffolding.** The mission gets one branch and one worktree, started from the latest local
+   commit of the branch you have checked out: commits you have not pushed are in it, uncommitted
+   changes are not. That branch is the mission's base branch, and stays so if you switch branches
+   later. The spec lists the requirements, the tasks and the files for each milestone, every
+   assumption made where the intent was silent, and every file shared with another unfinished
+   mission.
 2. **Research-and-planning.** One milestone at a time, a planner researches the code as it stands
    and writes the plan and the validation list. A milestone is planned only after the one before
    it has passed.
@@ -64,8 +67,10 @@ A failed validation is recorded and sent back to planning. A milestone gets its 
 two retries; after the third failure the mission is blocked and reports to you. Running
 `/mission-loop:start <slug>` followed by your direction unblocks it.
 
-When every milestone has passed, the branch is pushed once and one pull request is opened, listing
-the assumptions and the overlaps. You merge it.
+When every milestone has passed, the branch is pushed once and one pull request is opened into the
+base branch, listing the assumptions and the overlaps. You merge it. If the remote lacks the base
+branch, or lacks the commit the mission started from, the run first pushes the base branch up to
+that commit, never forced.
 
 ### What a mission leaves on disk
 

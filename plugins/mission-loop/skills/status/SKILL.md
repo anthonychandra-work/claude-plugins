@@ -14,7 +14,9 @@ Report where every mission stands. Read only, and cheap. Never a step toward doi
   From each, its committed `state.md` in its mission folder: `docs/missions/<slug>/`, under the
   scope folder for a scoped mission. Read it from the branch; a mission needs no worktree to be
   reported.
-- Whether each of those branches is already merged into the project's default branch.
+- Whether each of those branches is already merged into its base branch, locally or on the remote.
+  The base branch is the one its `state.md` names, and the project's default branch when the file
+  names none.
 - Every `intent.md` in a mission folder of the primary checkout that has no mission branch, and
   its status line.
 - When the project's host has a command-line tool here, whether a `done` mission has an open pull
