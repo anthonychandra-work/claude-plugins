@@ -52,6 +52,26 @@ When the user leaves a choice to you, make it, write it under Decisions, and tel
 Write what is wanted and what constrains it. Leave the task list and the files to the run, which
 works them out against the code.
 
+## More than one mission
+
+Offer to split the work into several missions when the user says it is too big for one, or when
+its milestones fall into parts that could be built at the same time.
+
+Propose the split before writing anything: each mission's name, what it delivers, and its wave.
+The missions of one wave run at the same time, each in its own session. A wave starts once every
+mission of the waves before it is merged.
+
+- Two missions expected to change the same files go in different waves.
+- A slug carries its place: `<wave>-<number>-<name>`. Three missions in two waves are
+  `1-1-export-job`, `1-2-export-audit` and `2-1-download-link`.
+- A mission added later takes the next free number in its wave, or goes in a later wave. A slug
+  whose mission has a branch is never renamed.
+
+When the user agrees to the split, write one intent per mission, each `Status: draft`. Every
+intent stands alone: a run reads one intent and nothing else, so each carries all five sections
+and every decision its own build needs, and its Scope names the mission that takes the work it
+leaves out. The user reads each one and marks it ready on its own.
+
 ## The file
 
 Use `intent-template.md` beside this file. All five sections are required.
@@ -85,3 +105,4 @@ intent.
 - You are about to write a decision the user never made and did not leave to you.
 - You are about to write a scoped intent with a milestone that needs a file outside the scope
   folder.
+- You are about to write the intents of a split the user has not agreed to.

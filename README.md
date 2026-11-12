@@ -31,11 +31,42 @@ intent that is not ready or is missing a section.
 `/mission-loop:status` reports every mission's state, milestone and attempt, and what is waiting on
 you. It changes nothing.
 
+`/mission-loop:setup` writes the project's instruction file in seven sections: project context,
+working conventions, skills, knowledge map, commands, gates, and what Claude gets wrong here. It
+reads the project, drafts what it finds, asks for the rest, and shows the draft before writing.
+
+### Setting a project up
+
+A run reads the project's instruction file for how to prepare a checkout, which gates to run and
+how to write commits and pull requests. `/mission-loop:setup` checks that those three are written
+down, and writes the file that holds them:
+
+- In a project with no instruction file, it writes `CLAUDE.md`.
+- In a project that has a `CLAUDE.md` or an `AGENTS.md`, it leaves that file alone and writes
+  `CLAUDE.local.md` beside it, holding only what the project's file does not say. Claude Code
+  loads it in every session started in its folder or below, the agents of a run included. It is
+  listed in the repository's local exclude file, so git never commits it and the project's
+  `.gitignore` is untouched.
+
+Where the two files differ, the project's file wins, and setup shows you each difference. Run it
+again after the project's file changes.
+
+### Several missions for one piece of work
+
+When the work is too big for one mission, `/mission-loop:intent` offers to split it. Each mission
+gets a wave: the missions of one wave run at the same time, each in its own session, and a wave
+starts once the waves before it are merged. Missions expected to change the same files go in
+different waves.
+
+The slug carries the order, `<wave>-<number>-<name>`, so it shows in the mission folder, the
+branch and every status line: `1-1-export-job` and `1-2-export-audit` first, then
+`2-1-download-link`. Each intent is complete on its own, and you mark each one ready yourself.
+
 ### A mission for one part of a project
 
 A project that keeps an instruction file, `CLAUDE.md`, in a folder below its root can keep
 missions for that part beside the missions of the whole. The folder a session starts in decides
-which: started in `apps/shop/` or below it, the three commands work on that scope, and started at
+which: started in `apps/shop/` or below it, `intent`, `start` and `status` work on that scope, and started at
 the root they work on the whole project.
 
 | | whole project | scope folder `apps/shop` |
